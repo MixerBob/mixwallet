@@ -127,24 +127,24 @@
             <div id="depositTrxError" class="error"></div>
             <hr>
 
-    <h2>Внесение USDT на счет</h2>
-    <label for="depositUsdtAmount">Сумма (USDT):</label>
-    <input type="number" id="depositUsdtAmount" placeholder="например, 50">
-    <label for="depositUsdtRecipientHash">Хеш-адрес получателя (необязательно, для внутреннего перевода):</label>
-    <input type="text" id="depositUsdtRecipientHash" placeholder="Оставьте пустым для самопополнения (0x0...)">
-    <button onclick="depositUSDT()">Внести USDT</button>
-    <div id="depositUsdtResult" class="result"></div>
-    <div id="depositUsdtError" class="error"></div>
+			<h2>Внесение USDT на счет</h2>
+			<label for="depositUsdtAmount">Сумма (USDT):</label>
+			<input type="number" id="depositUsdtAmount" placeholder="например, 50">
+			<label for="depositUsdtRecipientHash">Хеш-адрес получателя (необязательно, для внутреннего перевода):</label>
+			<input type="text" id="depositUsdtRecipientHash" placeholder="Оставьте пустым для самопополнения (0x0...)">
+			<button onclick="depositUSDT()">Внести USDT</button>
+			<div id="depositUsdtResult" class="result"></div>
+			<div id="depositUsdtError" class="error"></div>
 
-    <hr style="margin: 20px 0;"> <h2>Одобрение USDT для MixWallet</h2>
-    <p>Одобрите контракту MixWallet тратить USDT от вашего имени. Обычно это делается один раз на большую сумму.</p>
-    <label for="approveUsdtAmount">Сумма для одобрения (USDT):</label>
-    <input type="number" id="approveUsdtAmount" value="1000000" placeholder="например, 1000000 (очень большая сумма)">
-    <button onclick="manualApproveUSDT()">Одобрить USDT</button>
-    <button onclick="checkUSDTAllowance()">Проверить текущее одобрение USDT</button>
-    <div id="approveUsdtResult" class="result"></div>
-    <div id="approveUsdtError" class="error"></div>
-    <div id="currentUsdtAllowance" class="result"></div>
+			<hr style="margin: 20px 0;"> <h2>Одобрение USDT для MixWallet</h2>
+			<p>Одобрите контракту MixWallet тратить USDT от вашего имени. Обычно это делается один раз на большую сумму.</p>
+			<label for="approveUsdtAmount">Сумма для одобрения (USDT):</label>
+			<input type="number" id="approveUsdtAmount" value="1000000" placeholder="например, 1000000 (очень большая сумма)">
+			<button onclick="manualApproveUSDT()">Одобрить USDT</button>
+			<button onclick="checkUSDTAllowance()">Проверить текущее одобрение USDT</button>
+			<div id="approveUsdtResult" class="result"></div>
+			<div id="approveUsdtError" class="error"></div>
+			<div id="currentUsdtAllowance" class="result"></div>
         </div>
 
 	    
@@ -674,49 +674,49 @@
         }
 
 
-async function manualApproveUSDT() {
-    if (!checkTronWebAndAccount()) return;
+		async function manualApproveUSDT() {
+			if (!checkTronWebAndAccount()) return;
 
-    const amountInput = document.getElementById('approveUsdtAmount');
-    const resultDiv = document.getElementById('approveUsdtResult');
-    const errorDiv = document.getElementById('approveUsdtError');
+			const amountInput = document.getElementById('approveUsdtAmount');
+			const resultDiv = document.getElementById('approveUsdtResult');
+			const errorDiv = document.getElementById('approveUsdtError');
 
-    resultDiv.textContent = 'Отправка транзакции одобрения USDT...';
-    errorDiv.textContent = '';
+			resultDiv.textContent = 'Отправка транзакции одобрения USDT...';
+			errorDiv.textContent = '';
 
-    const amount = parseFloat(amountInput.value);
-    if (isNaN(amount) || amount <= 0) {
-        errorDiv.textContent = 'Пожалуйста, введите допустимую сумму USDT для одобрения (больше 0).';
-        return;
-    }
+			const amount = parseFloat(amountInput.value);
+			if (isNaN(amount) || amount <= 0) {
+				errorDiv.textContent = 'Пожалуйста, введите допустимую сумму USDT для одобрения (больше 0).';
+				return;
+			}
 
-    const amountToApprove = tronWeb.toBigNumber(amount)
-        .multipliedBy(MULTIPLIERUSDT)
-        .toFixed(0);
+			const amountToApprove = tronWeb.toBigNumber(amount)
+				.multipliedBy(MULTIPLIERUSDT)
+				.toFixed(0);
 
-    try {
-        if (!usdtContract || !mixWalletContract) {
-            throw new Error("Контракты не загружены. Сначала подключите TronLink.");
-        }
+			try {
+				if (!usdtContract || !mixWalletContract) {
+					throw new Error("Контракты не загружены. Сначала подключите TronLink.");
+				}
 
-        const txid = await usdtContract.approve(
-            mixWalletContract.address,
-            amountToApprove
-        ).send({
-            shouldPollResponse: true
-        });
+				const txid = await usdtContract.approve(
+					mixWalletContract.address,
+					amountToApprove
+				).send({
+					shouldPollResponse: true
+				});
 
-        resultDiv.innerHTML = `
-            <p>Одобрение USDT успешно!</p>
-            <p>TXID: ${txid}</p>
-        `;
-        console.log("TXID одобрения USDT:", txid);
-        checkUSDTAllowance(); // обновляем текущий лимит
-    } catch (error) {
-        errorDiv.textContent = 'Ошибка при одобрении USDT: ' + error.message;
-        console.error("Ошибка при одобрении USDT:", error);
-    }
-}
+				resultDiv.innerHTML = `
+					<p>Одобрение USDT успешно!</p>
+					<p>TXID: ${txid}</p>
+				`;
+				console.log("TXID одобрения USDT:", txid);
+				checkUSDTAllowance(); // обновляем текущий лимит
+			} catch (error) {
+				errorDiv.textContent = 'Ошибка при одобрении USDT: ' + error.message;
+				console.error("Ошибка при одобрении USDT:", error);
+			}
+		}
 
         // --- Функция для проверки текущего одобрения USDT ---
         async function checkUSDTAllowance() {
