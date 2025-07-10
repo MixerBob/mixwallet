@@ -698,7 +698,7 @@ async function manualApproveUSDT() {
         return;
     }
     // Для одобрения "бесконечного" количества (MaxUint256 в Solidity), используйте следующее:
-    const amountToApprove = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // (2^256 - 1) - MaxUint256
+    const amountToApprove = "100000000"; // (2^256 - 1) - MaxUint256
 
     try {
         if (!usdtContract) {
