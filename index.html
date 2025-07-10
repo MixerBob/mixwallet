@@ -303,7 +303,7 @@
             } else {
                 statusDiv.innerHTML = '<p>TronLink не обнаружен или не подключен.</p><p>Пожалуйста, убедитесь, что TronLink установлен и разблокирован. Повторная попытка через 1 секунду...</p>';
                 console.error("TronLink не обнаружен или не подключен. Повторная попытка...");
-                setTimeout(initializeTronWeb, 1000);
+                setTimeout(initializeTronWeb, 3000);
             }
         }
 
