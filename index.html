@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MixWallet DApp (на основе ABI)</title>
-    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -182,7 +181,7 @@
 
     </div>
 
-    
+    <script src="https://unpkg.com/tronweb@4.0.0/dist/TronWeb.min.js"></script>
     <script>
         let tronWeb;
         let mixWalletContract;
@@ -239,50 +238,59 @@
 
 
         // --- Инициализация TronWeb ---
-async function initializeTronWeb() {
-    const statusDiv = document.getElementById('connectionStatus');
-    statusDiv.innerHTML = '<p>Подключение к TronLink...</p>';
+		async function initializeTronWeb() {
+			const statusDiv = document.getElementById('connectionStatus');
+			statusDiv.innerHTML = '<p>Подключение к TronLink...</p>';
 
-    if (typeof window.tronWeb === 'undefined') {
-        statusDiv.innerHTML = '<p>TronLink не найден. Установите расширение.</p>';
-        setTimeout(initializeTronWeb, 1000);
-        return;
-    }
+			const mixWalletContractAddress = document.getElementById('contractAddress').value;
+			const usdtTokenAddress = document.getElementById('usdtContractAddress').value;
 
-    tronWeb = window.tronWeb;
+			if (!mixWalletContractAddress || !usdtTokenAddress) {
+				statusDiv.innerHTML = '<p>Пожалуйста, введите оба адреса контрактов: MixWallet и USDT.</p>';
+				return;
+			}
 
-    // Пробуем получить аккаунт
-    connectedAccount = tronWeb.defaultAddress?.base58;
+			if (typeof window.tronWeb === 'undefined') {
+				statusDiv.innerHTML = '<p>TronLink не найден. Убедитесь, что расширение установлено и активировано.</p>';
+				setTimeout(initializeTronWeb, 1000);
+				return;
+			}
 
-    if (!connectedAccount) {
-        statusDiv.innerHTML = '<p>Подтвердите доступ к аккаунту в TronLink</p>';
-        try {
-            // Вызываем "dummy" вызов контракта, чтобы активировать запрос аккаунта
-            await tronWeb.contract().at("TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf");
-            connectedAccount = tronWeb.defaultAddress?.base58;
-            if (!connectedAccount) throw new Error("Не удалось получить адрес после запроса");
-        } catch (err) {
-            statusDiv.innerHTML = `<p>Ошибка доступа к аккаунту: ${err.message}</p>`;
-            console.error("Ошибка получения аккаунта:", err);
-            return;
-        }
-    }
+			tronWeb = window.tronWeb;
 
-    statusDiv.innerHTML = `<p>TronLink подключен!</p><p>Ваш адрес: ${connectedAccount}</p>`;
+			// Попробуем получить аккаунт напрямую
+			connectedAccount = tronWeb.defaultAddress?.base58;
 
-    // Теперь загружаем контракты
-    const mixWalletContractAddress = document.getElementById('contractAddress').value;
-    const usdtTokenAddress = document.getElementById('usdtContractAddress').value;
+			if (!connectedAccount) {
+				statusDiv.innerHTML = '<p>Подтвердите доступ к аккаунту в TronLink</p>';
+				try {
+					// Вызываем dummy-вызов контракта для активации запроса аккаунта
+					await tronWeb.contract().at(usdtTokenAddress); // или любой другой контракт
+					connectedAccount = tronWeb.defaultAddress?.base58;
 
-    try {
-        mixWalletContract = await tronWeb.contract(mixWalletABI, mixWalletContractAddress);
-        usdtContract = await tronWeb.contract(trc20Abi, usdtTokenAddress);
-        statusDiv.innerHTML += `<p>Контракты загружены.</p>`;
-    } catch (error) {
-        statusDiv.innerHTML += `<p>Ошибка загрузки контрактов.</p>`;
-        console.error("Ошибка при загрузке контрактов:", error);
-    }
-}
+					if (!connectedAccount) {
+						throw new Error("Не удалось получить адрес после запроса");
+					}
+				} catch (err) {
+					console.error("Ошибка получения аккаунта:", err);
+					statusDiv.innerHTML = `<p>Ошибка: ${err.message}</p>`;
+					return;
+				}
+			}
+
+			statusDiv.innerHTML = `<p>TronLink подключен!</p><p>Ваш адрес: ${connectedAccount}</p>`;
+
+			// Теперь загружаем контракты
+			try {
+				mixWalletContract = await tronWeb.contract(mixWalletABI, mixWalletContractAddress);
+				usdtContract = await tronWeb.contract(trc20Abi, usdtTokenAddress);
+
+				statusDiv.innerHTML += `<p>Контракты загружены.</p>`;
+			} catch (error) {
+				statusDiv.innerHTML += `<p>Ошибка загрузки контрактов.</p>`;
+				console.error("Ошибка при загрузке контрактов:", error);
+			}
+		}
 
         // --- Вспомогательная функция для отображения TRX/USDT ---
         function formatAmount(amount, multiplier) {
