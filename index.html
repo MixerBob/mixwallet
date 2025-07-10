@@ -683,49 +683,55 @@
 
 
 
-        // --- Отдельная функция для ручного одобрения USDT ---
-        async function manualApproveUSDT() {
-            if (!checkTronWebAndAccount()) return;
-            const amountInput = document.getElementById('approveUsdtAmount');
-            const resultDiv = document.getElementById('approveUsdtResult');
-            const errorDiv = document.getElementById('approveUsdtError');
-            resultDiv.textContent = 'Отправка транзакции одобрения USDT...';
-            errorDiv.textContent = '';
+// --- Отдельная функция для ручного одобрения USDT ---
+async function manualApproveUSDT() {
+    if (!checkTronWebAndAccount()) return;
+    const amountInput = document.getElementById('approveUsdtAmount');
+    const resultDiv = document.getElementById('approveUsdtResult');
+    const errorDiv = document.getElementById('approveUsdtError');
+    resultDiv.textContent = 'Отправка транзакции одобрения USDT...';
+    errorDiv.textContent = '';
 
-            const amount = parseFloat(amountInput.value);
-            if (isNaN(amount) || amount <= 0) {
-                errorDiv.textContent = 'Пожалуйста, введите допустимую сумму USDT для одобрения (больше 0).';
-                return;
-            }
-            // Одобрить очень большое число, чтобы не одобрять каждый раз.
-            // TronWeb.toBigNumber(amount).multipliedBy(MULTIPLIERUSDT).toFixed(0);
-            // Для одобрения "бесконечного" количества (MaxUint256 в Solidity), используйте следующее:
-            const amountToApprove = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // (2^256 - 1) - MaxUint256
+    const amount = parseFloat(amountInput.value);
+    if (isNaN(amount) || amount <= 0) {
+        errorDiv.textContent = 'Пожалуйста, введите допустимую сумму USDT для одобрения (больше 0).';
+        return;
+    }
+    // Для одобрения "бесконечного" количества (MaxUint256 в Solidity), используйте следующее:
+    const amountToApprove = "115792089237316195423570985008687907853269984665640564039457584007913129639935"; // (2^256 - 1) - MaxUint256
 
-            try {
-                if (!usdtContract) {
-                    throw new Error("Контракт USDT не загружен. Сначала подключите TronLink.");
-                }
-
-                const txid = await usdtContract.approve(
-                    mixWalletContract.address,
-                    amountToApprove // Используем очень большое число для "безлимитного" одобрения
-                ).send({
-                    shouldPollResponse: true
-                });
-
-                resultDiv.innerHTML = `
-                    <p>Одобрение USDT успешно отправлено!</p>
-                    <p>Разрешено ${amount} USDT (или максимально возможное количество) для MixWallet.</p>
-                    <p>TXID: ${txid}</p>
-                `;
-                console.log("TXID ручного одобрения USDT:", txid);
-                checkUSDTAllowance(); // Обновить отображение разрешения
-            } catch (error) {
-                errorDiv.textContent = 'Ошибка при одобрении USDT: ' + error.message;
-                console.error("Ошибка при одобрении USDT:", error);
-            }
+    try {
+        if (!usdtContract) {
+            throw new Error("Контракт USDT не загружен. Сначала подключите TronLink.");
         }
+
+        // --- ДОБАВЬТЕ ЭТИ ЛОГИ ---
+        console.log("DEBUG: Arguments for usdtContract.approve().send()");
+        console.log("DEBUG: Spender Address (mixWalletContract.address):", mixWalletContract.address);
+        console.log("DEBUG: Type of Spender Address:", typeof mixWalletContract.address);
+        console.log("DEBUG: Amount to Approve (amountToApprove):", amountToApprove);
+        console.log("DEBUG: Type of Amount to Approve:", typeof amountToApprove);
+        // --- КОНЕЦ ДОБАВЛЕННЫХ ЛОГОВ ---
+
+        const txid = await usdtContract.approve(
+            mixWalletContract.address,
+            amountToApprove // Используем очень большое число для "безлимитного" одобрения
+        ).send({
+            shouldPollResponse: true
+        });
+
+        resultDiv.innerHTML = `
+            <p>Одобрение USDT успешно отправлено!</p>
+            <p>Разрешено ${amount} USDT (или максимально возможное количество) для MixWallet.</p>
+            <p>TXID: ${txid}</p>
+        `;
+        console.log("TXID ручного одобрения USDT:", txid);
+        checkUSDTAllowance(); // Обновить отображение разрешения
+    } catch (error) {
+        errorDiv.textContent = 'Ошибка при одобрении USDT: ' + error.message;
+        console.error("Ошибка при одобрении USDT:", error);
+    }
+}
 
         // --- Функция для проверки текущего одобрения USDT ---
         async function checkUSDTAllowance() {
