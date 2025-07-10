@@ -115,9 +115,9 @@
         </div>
 
         <div class="section">
-            <h2>Внесение средств на счет</h2>
+            <h2>Внесение средств</h2>
 
-            <h3>Внесение TRX на счет</h3>
+            <h3>Внесение TRX на смартконтракт</h3>
             <label for="depositTrxAmount">Сумма (TRX):</label>
             <input type="number" id="depositTrxAmount" placeholder="например, 100">
             <label for="depositTrxRecipientHash">Хеш-адрес получателя (необязательно, для внутреннего перевода):</label>
@@ -127,7 +127,7 @@
             <div id="depositTrxError" class="error"></div>
             <hr>
 
-	    <h3>Внесение USDT на счет</h3>
+	    <h3>Внесение USDT на смартконтракт</h3>
 	    <label for="depositUsdtAmount">Сумма (USDT):</label>
 	    <input type="number" id="depositUsdtAmount" placeholder="например, 50">
 	    <label for="depositUsdtRecipientHash">Хеш-адрес получателя (необязательно, для внутреннего перевода):</label>
@@ -137,7 +137,7 @@
 	    <div id="depositUsdtError" class="error"></div>
 
 	    <hr style="margin: 20px 0;"> <h3>Одобрение USDT для MixWallet</h3>
-	    <p>Одобрите контракту MixWallet тратить USDT от вашего имени. Обычно это делается один раз на большую сумму.</p>
+	    <p>Разрешаем смартконтракту MixWallet перемещать USDT от вашего имени. Обычно это делается один раз на большую сумму.</p>
 	    <label for="approveUsdtAmount">Сумма для одобрения (USDT):</label>
 	    <input type="number" id="approveUsdtAmount" value="1000000" placeholder="например, 1000000 (очень большая сумма)">
 	    <button onclick="manualApproveUSDT()">Одобрить USDT</button>
@@ -151,7 +151,7 @@
         <div class="section">
             <h2>Переводы на хеш-адреса</h2>
 
-            <h3>Перевод TRX на хеш-адрес</h3>
+            <h3>Перевод TRX на хеш-адрес смартконтракта</h3>
             <label for="transferTrxRecipientHash">Хеш-адрес получателя:</label>
             <input type="text" id="transferTrxRecipientHash" placeholder="Введите 0x... хеш-адрес">
             <label for="transferTrxAmount">Сумма (TRX):</label>
@@ -161,7 +161,7 @@
             <div id="transferTrxError" class="error"></div>
             <hr>
 
-            <h3>Перевод USDT на хеш-адрес</h3>
+            <h3>Перевод USDT на хеш-адрес смартконтракта</h3>
             <label for="transferUsdtRecipientHash">Хеш-адрес получателя:</label>
             <input type="text" id="transferUsdtRecipientHash" placeholder="Введите 0x... хеш-адрес">
             <label for="transferUsdtAmount">Сумма (USDT):</label>
@@ -174,7 +174,7 @@
         <div class="section">
             <h2>Вывод средств</h2>
 
-            <h3>Вывод TRX</h3>
+            <h3>Вывод TRX из смартконтракта</h3>
             <label for="withdrawTrxAmount">Сумма (TRX):</label>
             <input type="number" id="withdrawTrxAmount" placeholder="например, 20">
             <button onclick="withdrawTRX()">Вывести TRX</button>
@@ -182,7 +182,7 @@
             <div id="withdrawTrxError" class="error"></div>
             <hr>
 
-            <h3>Вывод USDT</h3>
+            <h3>Вывод USDT из смартконтракта</h3>
             <label for="withdrawUsdtAmount">Сумма (USDT):</label>
             <input type="number" id="withdrawUsdtAmount" placeholder="например, 10">
             <button onclick="withdrawUSDT()">Вывести USDT</button>
